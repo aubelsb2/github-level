@@ -65,41 +65,45 @@ func main() {
 	}
 
 	if stats.SelfNamedRepo {
-		RunInSelfNamedRepo(ctx, stats, user, githubUser)
+		log.Printf("Running in self made profile.")
+		RunInSelfNamedRepo(ctx, client, stats, user, githubUser)
 	}
 
 }
 
-func RunInSelfNamedRepo(ctx context.Context, stats *github_level.Stats, user *github.User, githubUser string) {
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{
-			AccessToken: os.Getenv("GITHUB_TOKEN"),
-			TokenType:   "bearer",
-		},
-	)
-	tc := oauth2.NewClient(ctx, ts)
-
-	client := github.NewClient(tc)
+func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *github_level.Stats, user *github.User, githubUser string) {
+	userGht := os.Getenv("USER_GITHUB_TOKEN")
+	if len(userGht) > 0 {
+		log.Printf("Found provided user github token using")
+		ts := oauth2.StaticTokenSource(
+			&oauth2.Token{
+				AccessToken: userGht,
+				TokenType:   "bearer",
+			},
+		)
+		tc := oauth2.NewClient(ctx, ts)
+		client = github.NewClient(tc)
+	}
 
 	masterReadmeContents, _, _, err := client.Repositories.GetContents(ctx, githubUser, githubUser, "README.md", &github.RepositoryContentGetOptions{})
 	if err != nil {
-		log.Panicf("Readme get fail: %v", err)
+		log.Panicf("Readme user get fail: %v", err)
 	}
 	if masterReadmeContents.Content == nil {
-		log.Panicf("Readme was nil: %v", err)
+		log.Panicf("Readme user was nil: %v", err)
 	}
 	c := *masterReadmeContents.Content
 	switch masterReadmeContents.GetEncoding() {
 	case "base64":
 		b, err := base64.StdEncoding.DecodeString(c)
 		if err != nil {
-			log.Panicf("Error %v", err)
+			log.Panicf("Error user %v", err)
 		}
 		c = string(b)
 	}
 	c = ReplaceContent(stats, c)
-	branch := fmt.Sprintf("githublevel-%s", time.Now().Format("20060102T1504"))
-	_, _, err = client.Repositories.CreateFile(ctx, githubUser, "github-level", "README.md", &github.RepositoryContentFileOptions{
+	branch := fmt.Sprintf("githublevel-%s", time.Now().Format("D20060102T1504"))
+	_, _, err = client.Repositories.CreateFile(ctx, githubUser, githubUser, "README.md", &github.RepositoryContentFileOptions{
 		Message:   github.String("Version Update!"),
 		Content:   []byte(c),
 		SHA:       masterReadmeContents.SHA,
@@ -107,7 +111,7 @@ func RunInSelfNamedRepo(ctx context.Context, stats *github_level.Stats, user *gi
 		Committer: &github.CommitAuthor{Name: github.String("Automated " + github_level.PS(user.Name)), Email: user.Email},
 	})
 	if err != nil {
-		log.Panicf("Error creating/updating readme: %v", err)
+		log.Panicf("Error user creating/updating readme: %v", err)
 	}
 
 }
