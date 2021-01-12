@@ -26,6 +26,9 @@ type Stats struct {
 	Following             int
 	OwnedPrivateRepos     int
 	PublicGists           int
+	// These are a bit flawed b/c they are events and I'm not paginating (anywhere actually) but fun for now.
+	PRRequests   int
+	IssuesLogged int
 }
 
 func GetStats(ctx context.Context) (stats *Stats) {
@@ -36,7 +39,8 @@ func GetStats(ctx context.Context) (stats *Stats) {
 	}
 	client := github.NewClient(nil)
 
-	user, _, err := client.Users.Get(ctx, os.ExpandEnv("${GITHUB_REPOSITORY_OWNER}"))
+	githubUser := os.ExpandEnv("${GITHUB_REPOSITORY_OWNER}")
+	user, _, err := client.Users.Get(ctx, githubUser)
 	if err != nil {
 		log.Panicf("Error: %v", err)
 	}
@@ -55,7 +59,7 @@ func GetStats(ctx context.Context) (stats *Stats) {
 	if user.PublicGists != nil {
 		stats.PublicGists = *user.PublicGists
 	}
-	repositories, _, err := client.Repositories.List(ctx, os.ExpandEnv("${GITHUB_REPOSITORY_OWNER}"), &github.RepositoryListOptions{
+	repositories, _, err := client.Repositories.List(ctx, githubUser, &github.RepositoryListOptions{
 		Visibility: "public",
 	})
 	if err != nil {
@@ -99,7 +103,26 @@ func GetStats(ctx context.Context) (stats *Stats) {
 			stats.SelfNamedRepo = true
 		}
 	}
+	events, _, err := client.Activity.ListEventsPerformedByUser(ctx, githubUser, true, &github.ListOptions{})
+	if err != nil {
+		log.Panicf("Error: %v", err)
+	}
+	for _, event := range events {
+		if event.Type == nil {
+			continue
+		}
+		switch *event.Type {
+		case "PullRequestEvent":
+			stats.PRRequests++
+		case "IssuesEvent":
+			stats.IssuesLogged++
+		}
+	}
 	return
+}
+
+func (s *Stats) V1() Level {
+	return GithubLevelV1(*s)
 }
 
 func PB(private *bool) bool {
@@ -112,6 +135,7 @@ func PS(name *string) string {
 	}
 	return ""
 }
+
 func PI(name *int) int {
 	if name != nil {
 		return *name

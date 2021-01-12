@@ -24,6 +24,9 @@ jobs:
 #     - name: Test
 #       run: go test -v ./...
 
-    - name: Run env list
+    - name: Stats
       run: go run github.com/arran4/github-level/cmd/stats
+
+    - name: Text Levels
+      run: go run github.com/arran4/github-level/cmd/leveltext
 
