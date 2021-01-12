@@ -37,7 +37,7 @@ func main() {
 		log.Panicf("Error: %v", err)
 	}
 
-	masterReadmeContents, _, _, err := client.Repositories.GetContents(ctx, githubUser, "github-level", "README.md", &github.RepositoryContentGetOptions{})
+	masterReadmeContents, _, err := client.Repositories.GetReadme(ctx, githubUser, githubUser, &github.RepositoryContentGetOptions{})
 	if err != nil {
 		log.Panicf("Readme get fail: %v", err)
 	}
@@ -94,7 +94,7 @@ func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *githu
 		return
 	}
 
-	masterReadmeContents, _, _, err := client.Repositories.GetContents(ctx, githubUser, githubUser, "README.md", &github.RepositoryContentGetOptions{})
+	masterReadmeContents, _, err := client.Repositories.GetReadme(ctx, githubUser, githubUser, &github.RepositoryContentGetOptions{})
 	if err != nil {
 		log.Panicf("Readme user get fail: %v", err)
 	}
@@ -116,6 +116,21 @@ func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *githu
 	c = ReplaceContent(stats, c)
 	branch := fmt.Sprintf("githublevel-%s", time.Now().Format("D20060102T1504"))
 	if presha != postsha {
+		reposit, _, err := client.Repositories.Get(ctx, githubUser, githubUser)
+		if err != nil {
+			log.Panicf("Error user creating/updating readme: %v", err)
+		}
+		mainHeadRef, _, err := client.Git.GetRef(ctx, githubUser, githubUser, "refs/head/"+reposit.GetDefaultBranch())
+		if err != nil {
+			log.Panicf("Error user creating/updating readme: %v", err)
+		}
+		_, _, err = client.Git.CreateRef(ctx, githubUser, githubUser, &github.Reference{
+			Ref:    github.String("refs/head/" + branch),
+			Object: mainHeadRef.Object,
+		})
+		if err != nil {
+			log.Panicf("Error user creating/updating readme: %v", err)
+		}
 		_, _, err = client.Repositories.CreateFile(ctx, githubUser, githubUser, "README.md", &github.RepositoryContentFileOptions{
 			Message:   github.String("Version Update!"),
 			Content:   []byte(c),
@@ -126,6 +141,16 @@ func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *githu
 		if err != nil {
 			log.Panicf("Error user creating/updating readme: %v", err)
 		}
+		_, _, err = client.PullRequests.Create(ctx, githubUser, githubUser, &github.NewPullRequest{
+			Title: github.String(fmt.Sprintf("Github Level (V1): %v", stats.V1().Calculate())),
+			Head:  github.String(branch),
+			Base:  github.String(reposit.GetDefaultBranch()),
+			Body:  github.String(fmt.Sprintf("Please accept: Github Level (V1): %v", stats.V1().Calculate())),
+		})
+		if err != nil {
+			log.Panicf("Error user creating/updating readme: %v", err)
+		}
+
 	} else {
 		log.Printf("Presha %v matches post sha %v skipping", presha, postsha)
 	}
