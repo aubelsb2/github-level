@@ -36,7 +36,7 @@ func main() {
 		log.Panicf("Error: %v", err)
 	}
 
-	masterReadmeContents, _, err := client.Repositories.GetReadme(ctx, githubUser, githubUser, &github.RepositoryContentGetOptions{})
+	masterReadmeContents, _, err := client.Repositories.GetReadme(ctx, githubUser, "github-level", &github.RepositoryContentGetOptions{})
 	if err != nil {
 		log.Panicf("Readme get fail: %v", err)
 	}
