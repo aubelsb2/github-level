@@ -25,5 +25,5 @@ jobs:
 #       run: go test -v ./...
 
     - name: Run env list
-      run: go run github.com/arran4/github-level/cmd/envlist
+      run: go run github.com/arran4/github-level/cmd/stats
 
