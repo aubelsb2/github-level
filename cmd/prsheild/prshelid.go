@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"crypto/sha1"
-	"encoding/base64"
 	"fmt"
 	github_level "github.com/arran4/github-level"
 	"github.com/google/go-github/github"
@@ -41,28 +40,19 @@ func main() {
 	if err != nil {
 		log.Panicf("Readme get fail: %v", err)
 	}
-	masterReadmeContents, _, _, err = client.Repositories.GetContents(ctx, githubUser, githubUser, masterReadmeContents.GetPath(), &github.RepositoryContentGetOptions{})
-	if err != nil {
-		log.Panicf("Readme get fail: %v", err)
-	}
 	if masterReadmeContents.Content == nil {
 		log.Panicf("Readme was nil: %v", err)
 	}
-	c := *masterReadmeContents.Content
-	switch masterReadmeContents.GetEncoding() {
-	case "base64":
-		b, err := base64.StdEncoding.DecodeString(c)
-		if err != nil {
-			log.Panicf("Error %v", err)
-		}
-		c = string(b)
+	c, err := masterReadmeContents.GetContent()
+	if err != nil {
+		log.Panicf("Error %v", err)
 	}
 	presha := sha1.Sum([]byte(c))
 	c = ReplaceContent(stats, c)
 	postsha := sha1.Sum([]byte(c))
 	if presha != postsha {
 		_, _, err = client.Repositories.CreateFile(ctx, githubUser, "github-level", masterReadmeContents.GetPath(), &github.RepositoryContentFileOptions{
-			Message:   github.String("Version Update!"),
+			Message:   github.String("Github Level Update!"),
 			Content:   []byte(c),
 			SHA:       masterReadmeContents.SHA,
 			Branch:    github.String("main"),
@@ -102,26 +92,16 @@ func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *githu
 	if err != nil {
 		log.Panicf("Readme user get fail: %v", err)
 	}
-	masterReadmeContents, _, _, err = client.Repositories.GetContents(ctx, githubUser, githubUser, masterReadmeContents.GetPath(), &github.RepositoryContentGetOptions{})
-	if err != nil {
-		log.Panicf("Readme get fail: %v", err)
-	}
 	if masterReadmeContents.Content == nil {
 		log.Panicf("Readme user was nil: %v", err)
 	}
-	c := *masterReadmeContents.Content
-	switch masterReadmeContents.GetEncoding() {
-	case "base64":
-		b, err := base64.StdEncoding.DecodeString(c)
-		if err != nil {
-			log.Panicf("Error user %v", err)
-		}
-		c = string(b)
+	c, err := masterReadmeContents.GetContent()
+	if err != nil {
+		log.Panicf("Error %v", err)
 	}
 	presha := sha1.Sum([]byte(c))
 	c = ReplaceContent(stats, c)
 	postsha := sha1.Sum([]byte(c))
-	c = ReplaceContent(stats, c)
 	branch := fmt.Sprintf("githublevel-%s", time.Now().Format("D20060102T1504"))
 	if presha != postsha {
 		reposit, _, err := client.Repositories.Get(ctx, githubUser, githubUser)
