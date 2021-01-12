@@ -2,11 +2,13 @@
 
 This is a little automated script using github actions that will update this badge here:
 
-<a id="githubLevelId" href="https://github.com/arran4/github-level"> <img src="https://img.shields.io/badge/Github Level%20version1-577-yellowgreen" alt="Github level 577"/></a>
+<a id="githubLevelId" href="https://github.com/arran4/github-level"> <img src="https://img.shields.io/badge/Github Level%20version1-581-yellowgreen" alt="Github level 581"/></a>
 
 When you fork this project and when you manually rerun the badge. 
 
 You can update the badge by creating a reverse pull requests to the project, once you have done so it will update. Watch this project for updates to know when! (Maybe I might automate that?)
+
+Don't forget to enable workflow actions if you haven't by clicking on "Actions" and accepting.
 
 # Personal repo
 
