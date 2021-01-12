@@ -54,7 +54,7 @@ func main() {
 		_, _, err = client.Repositories.CreateFile(ctx, githubUser, "github-level", masterReadmeContents.GetPath(), &github.RepositoryContentFileOptions{
 			Message:   github.String("Github Level Update!"),
 			Content:   []byte(c),
-			SHA:       masterReadmeContents.SHA,
+			SHA:       github.String(masterReadmeContents.GetSHA()),
 			Branch:    github.String("main"),
 			Committer: &github.CommitAuthor{Name: github.String("Automated " + github_level.PS(user.Name)), Email: user.Email},
 		})
@@ -129,7 +129,7 @@ func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *githu
 		_, _, err = client.Repositories.CreateFile(ctx, githubUser, githubUser, masterReadmeContents.GetPath(), &github.RepositoryContentFileOptions{
 			Message:   github.String("Version Update!"),
 			Content:   []byte(c),
-			SHA:       masterReadmeContents.SHA,
+			SHA:       github.String(masterReadmeContents.GetSHA()),
 			Branch:    github.String(branch),
 			Committer: &github.CommitAuthor{Name: github.String("Automated " + github_level.PS(user.Name)), Email: user.Email},
 		})
