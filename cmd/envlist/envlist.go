@@ -1,12 +1,10 @@
 package main
 
-import (
-	"log"
-	"os"
-)
+import "log"
 
 func main() {
-	for _, env := range os.Environ() {
-		log.Printf("%v", env)
-	}
+	//for _, env := range os.Environ() {
+	//	log.Printf("%v", env)
+	//}
+	log.Printf("Do not use")
 }
