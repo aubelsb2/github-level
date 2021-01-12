@@ -24,7 +24,7 @@ func main() {
 		log.Panicf("Error: %v", err)
 	}
 
-	masterReadmeContents, _, _, err := client.Repositories.GetContents(ctx, githubUser, "github-level", "readme.md", &github.RepositoryContentGetOptions{})
+	masterReadmeContents, _, _, err := client.Repositories.GetContents(ctx, githubUser, "github-level", "README.md", &github.RepositoryContentGetOptions{})
 	if err != nil {
 		log.Panicf("Readme get fail: %v", err)
 	}
@@ -32,7 +32,7 @@ func main() {
 		log.Panicf("Readme was nil: %v", err)
 	}
 	c := ReplaceContent(stats, *masterReadmeContents.Content)
-	_, _, err = client.Repositories.CreateFile(ctx, githubUser, "github-level", "readme.md", &github.RepositoryContentFileOptions{
+	_, _, err = client.Repositories.CreateFile(ctx, githubUser, "github-level", "README.md", &github.RepositoryContentFileOptions{
 		Message:   github.String("Version Update!"),
 		Content:   []byte(c),
 		SHA:       masterReadmeContents.SHA,
