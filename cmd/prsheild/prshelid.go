@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha1"
 	"fmt"
@@ -9,7 +10,6 @@ import (
 	"golang.org/x/oauth2"
 	"log"
 	"os"
-	"regexp"
 	"strings"
 	"time"
 )
@@ -146,16 +146,20 @@ func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *githu
 }
 
 func ReplaceContent(stats *github_level.Stats, c string) string {
+	mrc := bytes.SplitAfter([]byte(c), []byte("\n"))
+
+	newlnchar := "\n"
+
 	shieldLines := make([]string, 0, 1)
 	for _, l := range []github_level.Level{
 		stats.V1(),
 	} {
-		shieldLines = append(shieldLines, l.Shield())
+		shieldLines = append(shieldLines, l.Shield()+newlnchar)
 	}
 
-	mrc := regexp.MustCompile("\r\n|\r|\n").Split(c, -1)
 	nrc := make([]string, 0, len(mrc)+2)
-	for _, line := range mrc {
+	for _, lineB := range mrc {
+		line := string(lineB)
 		if strings.Contains(line, "id=\"githubLevelId\"") {
 			nrc = append(nrc, shieldLines...)
 			shieldLines = make([]string, 0, 0)
@@ -164,5 +168,5 @@ func ReplaceContent(stats *github_level.Stats, c string) string {
 		}
 	}
 	nrc = append(nrc, shieldLines...)
-	return strings.Join(nrc, "\n")
+	return strings.Join(nrc, "")
 }
