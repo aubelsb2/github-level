@@ -32,4 +32,5 @@ jobs:
 
     - name: PR shield
       run: go run github.com/arran4/github-level/cmd/prsheild
-
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
