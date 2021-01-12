@@ -21,8 +21,8 @@ func (l GithubLevelV1) Calculate() (r int) {
 		float64(l.LargestStargazerCount),
 		float64(l.LargestWatcherCount),
 		float64(l.LicenseSophistication),
-		float64(l.UserCreatedDate.Unix() / 60 / 60 / 24),
-		float64(l.FirstPublicRepoDate.Unix() / 60 / 60 / 24),
+		float64(l.UserCreatedDate.Unix() / 60 / 60 / 24 / 30 / 12),
+		float64(l.FirstPublicRepoDate.Unix() / 60 / 60 / 24 / 30 / 12),
 		float64(len(l.Licenses)),
 	} {
 		if v > 0 {
