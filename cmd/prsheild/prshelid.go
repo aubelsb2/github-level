@@ -41,6 +41,10 @@ func main() {
 	if err != nil {
 		log.Panicf("Readme get fail: %v", err)
 	}
+	masterReadmeContents, _, _, err = client.Repositories.GetContents(ctx, githubUser, githubUser, masterReadmeContents.GetPath(), &github.RepositoryContentGetOptions{})
+	if err != nil {
+		log.Panicf("Readme get fail: %v", err)
+	}
 	if masterReadmeContents.Content == nil {
 		log.Panicf("Readme was nil: %v", err)
 	}
@@ -97,6 +101,10 @@ func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *githu
 	masterReadmeContents, _, err := client.Repositories.GetReadme(ctx, githubUser, githubUser, &github.RepositoryContentGetOptions{})
 	if err != nil {
 		log.Panicf("Readme user get fail: %v", err)
+	}
+	masterReadmeContents, _, _, err = client.Repositories.GetContents(ctx, githubUser, githubUser, masterReadmeContents.GetPath(), &github.RepositoryContentGetOptions{})
+	if err != nil {
+		log.Panicf("Readme get fail: %v", err)
 	}
 	if masterReadmeContents.Content == nil {
 		log.Panicf("Readme user was nil: %v", err)
