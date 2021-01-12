@@ -15,4 +15,4 @@ Version one is just rather simple. Looking for suggestions in the form of PRs!
 
 # "Git it a go" -- Fork it!
 
-...
+...<a id="githubLevelId" href="https://github.com/arran4/github-level"> <img src="https://img.shields.io/badge/Github Level%20version1-583-yellowgreen" alt="Github level 583"/></a>
