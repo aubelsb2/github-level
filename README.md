@@ -2,7 +2,7 @@
 
 This is a little automated script using github actions that will update this badge here:
 
-<a id="githubLevelId" href="https://github.com/arran4/github-level"> <img src="https://img.shields.io/badge/Github Level%20version1-582-yellowgreen" alt="Github level 582"/></a>
+<a id="githubLevelId" href="https://github.com/arran4/github-level"> <img src="https://img.shields.io/badge/Github Level%20version1-577-yellowgreen" alt="Github level 577"/></a>
 
 When you fork this project and when you manually rerun the badge. 
 
@@ -20,4 +20,4 @@ Version one is just rather simple. Looking for suggestions in the form of PRs!
 
 It will update the badge approx every friday depending on time zone.
 
-As for updating the code use [this link](./compare/main...arran4:main)
+As for updating the code use [this link](../../compare/main...arran4:main)
