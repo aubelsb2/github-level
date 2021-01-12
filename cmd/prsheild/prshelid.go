@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	github_level "github.com/arran4/github-level"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
@@ -40,7 +41,12 @@ func main() {
 	if masterReadmeContents.Content == nil {
 		log.Panicf("Readme was nil: %v", err)
 	}
-	c := ReplaceContent(stats, *masterReadmeContents.Content)
+	c := *masterReadmeContents.Content
+	switch masterReadmeContents.GetEncoding() {
+	case "base64":
+		c = base64.StdEncoding.EncodeToString([]byte(c))
+	}
+	c = ReplaceContent(stats, c)
 	_, _, err = client.Repositories.CreateFile(ctx, githubUser, "github-level", "README.md", &github.RepositoryContentFileOptions{
 		Message:   github.String("Version Update!"),
 		Content:   []byte(c),
