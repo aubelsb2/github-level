@@ -57,7 +57,7 @@ func main() {
 	c = ReplaceContent(stats, c)
 	postsha := sha1.Sum([]byte(c))
 	if presha != postsha {
-		_, _, err = client.Repositories.CreateFile(ctx, githubUser, "github-level", "README.md", &github.RepositoryContentFileOptions{
+		_, _, err = client.Repositories.CreateFile(ctx, githubUser, "github-level", masterReadmeContents.GetPath(), &github.RepositoryContentFileOptions{
 			Message:   github.String("Version Update!"),
 			Content:   []byte(c),
 			SHA:       masterReadmeContents.SHA,
@@ -131,7 +131,7 @@ func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *githu
 		if err != nil {
 			log.Panicf("Error user creating/updating readme: %v", err)
 		}
-		_, _, err = client.Repositories.CreateFile(ctx, githubUser, githubUser, "README.md", &github.RepositoryContentFileOptions{
+		_, _, err = client.Repositories.CreateFile(ctx, githubUser, githubUser, masterReadmeContents.GetPath(), &github.RepositoryContentFileOptions{
 			Message:   github.String("Version Update!"),
 			Content:   []byte(c),
 			SHA:       masterReadmeContents.SHA,
