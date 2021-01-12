@@ -5,7 +5,7 @@ import (
 	"context"
 	"crypto/sha1"
 	"fmt"
-	github_level "github.com/arran4/github-level"
+	"github.com/arran4/github-level"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
 	"log"
@@ -113,11 +113,11 @@ func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *githu
 	if presha != postsha {
 		reposit, _, err := client.Repositories.Get(ctx, githubUser, githubUser)
 		if err != nil {
-			log.Panicf("Error user creating/updating readme: %v", err)
+			log.Panicf("Error getting repo: %v", err)
 		}
-		mainHeadRef, _, err := client.Git.GetRef(ctx, githubUser, githubUser, "refs/head/"+reposit.GetDefaultBranch())
+		mainHeadRef, _, err := client.Git.GetRef(ctx, githubUser, githubUser, "head/"+reposit.GetDefaultBranch())
 		if err != nil {
-			log.Panicf("Error user creating/updating readme: %v", err)
+			log.Panicf("Error getting default branch ref: %v", err)
 		}
 		_, _, err = client.Git.CreateRef(ctx, githubUser, githubUser, &github.Reference{
 			Ref:    github.String("refs/head/" + branch),
@@ -143,7 +143,7 @@ func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *githu
 			Body:  github.String(fmt.Sprintf("Please accept: Github Level (V1): %v", stats.V1().Calculate())),
 		})
 		if err != nil {
-			log.Panicf("Error user creating/updating readme: %v", err)
+			log.Panicf("Error creating pr: %v", err)
 		}
 
 	} else {

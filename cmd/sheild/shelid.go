@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	github_level "github.com/arran4/github-level"
+	"github.com/arran4/github-level"
 	"log"
 )
 
