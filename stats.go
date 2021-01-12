@@ -99,7 +99,7 @@ func GetStats(ctx context.Context) (stats *Stats) {
 			stats.SumLastUpdatedDays += repository.UpdatedAt.Time.Unix() / 60 / 60 / 24
 			stats.TotalReposWithUpdated++
 		}
-		if PS(repository.Name) == PS(user.Name) {
+		if repository.GetName() == githubUser {
 			stats.SelfNamedRepo = true
 		}
 	}
