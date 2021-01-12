@@ -4,6 +4,7 @@ import (
 	"context"
 	github_level "github.com/arran4/github-level"
 	"github.com/google/go-github/github"
+	"golang.org/x/oauth2"
 	"log"
 	"os"
 	"regexp"
@@ -15,7 +16,12 @@ func main() {
 
 	stats := github_level.GetStats(ctx)
 
-	client := github.NewClient(nil)
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+
+	client := github.NewClient(tc)
 
 	githubUser := os.ExpandEnv("${GITHUB_REPOSITORY_OWNER}")
 
