@@ -115,12 +115,12 @@ func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *githu
 		if err != nil {
 			log.Panicf("Error getting repo: %v", err)
 		}
-		mainHeadRef, _, err := client.Git.GetRef(ctx, githubUser, githubUser, "head/"+reposit.GetDefaultBranch())
+		mainHeadRef, _, err := client.Git.GetRef(ctx, githubUser, githubUser, "heads/"+reposit.GetDefaultBranch())
 		if err != nil {
 			log.Panicf("Error getting default branch ref: %v", err)
 		}
 		_, _, err = client.Git.CreateRef(ctx, githubUser, githubUser, &github.Reference{
-			Ref:    github.String("refs/head/" + branch),
+			Ref:    github.String("refs/heads/" + branch),
 			Object: mainHeadRef.Object,
 		})
 		if err != nil {
