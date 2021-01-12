@@ -52,7 +52,7 @@ func main() {
 	postsha := sha1.Sum([]byte(c))
 	if presha != postsha {
 		_, _, err = client.Repositories.CreateFile(ctx, githubUser, "github-level", masterReadmeContents.GetPath(), &github.RepositoryContentFileOptions{
-			Message:   github.String("Github Level Update!"),
+			Message:   github.String(fmt.Sprintf("Github Level Update: Now %v!", stats.V1().Calculate())),
 			Content:   []byte(c),
 			SHA:       github.String(masterReadmeContents.GetSHA()),
 			Branch:    github.String("main"),
@@ -127,7 +127,7 @@ func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *githu
 			log.Panicf("Error user creating/updating readme: %v", err)
 		}
 		_, _, err = client.Repositories.CreateFile(ctx, githubUser, githubUser, masterReadmeContents.GetPath(), &github.RepositoryContentFileOptions{
-			Message:   github.String("Version Update!"),
+			Message:   github.String(fmt.Sprintf("Github Level Update: Now %v!", stats.V1().Calculate())),
 			Content:   []byte(c),
 			SHA:       github.String(masterReadmeContents.GetSHA()),
 			Branch:    github.String(branch),
