@@ -59,6 +59,9 @@ func main() {
 			Committer: &github.CommitAuthor{Name: github.String("Automated " + github_level.PS(user.Name)), Email: user.Email},
 		})
 		if err != nil {
+			log.Printf("Presha %v postsha %v", presha, postsha)
+			log.Printf("Master read me: %v %v %v %v", masterReadmeContents.GetPath(), masterReadmeContents.GetSHA(), masterReadmeContents.GetType(), MustStr(masterReadmeContents.GetContent()))
+			log.Printf("New contnets %v", c)
 			log.Panicf("Error creating/updating readme: %v", err)
 		}
 	} else {
@@ -69,6 +72,10 @@ func main() {
 		RunInSelfNamedRepo(ctx, client, stats, user, githubUser)
 	}
 
+}
+
+func MustStr(content string, err error) string {
+	return content
 }
 
 func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *github_level.Stats, user *github.User, githubUser string) {
