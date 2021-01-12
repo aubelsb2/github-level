@@ -24,3 +24,6 @@ jobs:
     - name: Text Levels
       run: go run github.com/arran4/github-level/cmd/leveltext
 
+    - name: Create Badge Files
+      run: go run github.com/arran4/github-level/cmd/badge
+
