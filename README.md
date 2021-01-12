@@ -8,6 +8,8 @@ When you fork this project and when you manually rerun the badge.
 
 You can update the badge by creating a reverse pull requests to the project, once you have done so it will update. Watch this project for updates to know when! (Maybe I might automate that?)
 
+Don't forget to enable workflow actions if you haven't by clicking on "Actions" and accepting.
+
 # Personal repo
 
 If you set `USER_GITHUB_SECRET` token in your fork of this AND if you have a self named repo.. Ie in my case I have a repo: https://github.com/arran4/arran4 it will create a PR for a badge update to that repo too. 
