@@ -17,7 +17,10 @@ func main() {
 	stats := github_level.GetStats(ctx)
 
 	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
+		&oauth2.Token{
+			AccessToken: os.Getenv("GITHUB_TOKEN"),
+			TokenType:   "bearer",
+		},
 	)
 	tc := oauth2.NewClient(ctx, ts)
 
