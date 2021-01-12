@@ -34,3 +34,4 @@ jobs:
       run: go run github.com/arran4/github-level/cmd/prsheild
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        USER_GITHUB_TOKEN: ${{ secrets.USER_GITHUB_TOKEN }}

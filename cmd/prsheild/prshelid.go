@@ -89,6 +89,9 @@ func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *githu
 		)
 		tc := oauth2.NewClient(ctx, ts)
 		client = github.NewClient(tc)
+	} else {
+		log.Print("### NOTICE ### If you want this to update your self named repo you will need to create a secret: USER_GITHUB_TOKEN with a github token.")
+		return
 	}
 
 	masterReadmeContents, _, _, err := client.Repositories.GetContents(ctx, githubUser, githubUser, "README.md", &github.RepositoryContentGetOptions{})
