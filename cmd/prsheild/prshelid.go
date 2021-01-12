@@ -23,7 +23,7 @@ func main() {
 
 	client := github.NewClient(tc)
 
-	githubUser := os.ExpandEnv("${GITHUB_REPOSITORY_OWNER}")
+	githubUser := os.Getenv("GITHUB_REPOSITORY_OWNER")
 
 	user, _, err := client.Users.Get(ctx, githubUser)
 	if err != nil {

@@ -88,7 +88,7 @@ func (GithubLevelV1) Version() int {
 
 func (l GithubLevelV1) Shield() string {
 	v := l.Calculate()
-	githubUser := os.ExpandEnv("${GITHUB_REPOSITORY_OWNER}")
+	githubUser := os.Getenv("GITHUB_REPOSITORY_OWNER")
 	url := fmt.Sprintf("https://github.com/%s/github-level", githubUser)
 	return fmt.Sprintf(`<a id="githubLevelId" href="%s"> <img src="https://img.shields.io/badge/%s%%20version%v-%v-yellowgreen" alt="Github level %v"/></a>`, url, "Github Level",
 		l.Version(), v, v)

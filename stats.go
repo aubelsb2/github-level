@@ -39,7 +39,7 @@ func GetStats(ctx context.Context) (stats *Stats) {
 	}
 	client := github.NewClient(nil)
 
-	githubUser := os.ExpandEnv("${GITHUB_REPOSITORY_OWNER}")
+	githubUser := os.Getenv("GITHUB_REPOSITORY_OWNER")
 	user, _, err := client.Users.Get(ctx, githubUser)
 	if err != nil {
 		log.Panicf("Error: %v", err)
