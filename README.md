@@ -16,4 +16,8 @@ Version one is just rather simple. Looking for suggestions in the form of PRs!
 
 # "Git it a go" -- Fork it!
 
-...
+# Updating
+
+It will update the badge approx every friday depending on time zone.
+
+As for updating the code use [this link](./compare/main...arran4:main)
