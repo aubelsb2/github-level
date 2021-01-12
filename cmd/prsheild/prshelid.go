@@ -41,6 +41,10 @@ func main() {
 	if err != nil {
 		log.Panicf("Readme get fail: %v", err)
 	}
+	masterReadmeContentsForSha, _, _, err := client.Repositories.GetContents(ctx, githubUser, githubUser, masterReadmeContents.GetPath(), &github.RepositoryContentGetOptions{})
+	if err != nil {
+		log.Panicf("Readme get fail: %v", err)
+	}
 	if masterReadmeContents.Content == nil {
 		log.Panicf("Readme was nil: %v", err)
 	}
@@ -60,7 +64,7 @@ func main() {
 		_, _, err = client.Repositories.CreateFile(ctx, githubUser, "github-level", masterReadmeContents.GetPath(), &github.RepositoryContentFileOptions{
 			Message:   github.String("Version Update!"),
 			Content:   []byte(c),
-			SHA:       masterReadmeContents.SHA,
+			SHA:       masterReadmeContentsForSha.SHA,
 			Branch:    github.String("main"),
 			Committer: &github.CommitAuthor{Name: github.String("Automated " + github_level.PS(user.Name)), Email: user.Email},
 		})
