@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/sha1"
 	"encoding/base64"
 	"fmt"
 	github_level "github.com/arran4/github-level"
@@ -52,18 +53,23 @@ func main() {
 		}
 		c = string(b)
 	}
+	presha := sha1.Sum([]byte(c))
 	c = ReplaceContent(stats, c)
-	_, _, err = client.Repositories.CreateFile(ctx, githubUser, "github-level", "README.md", &github.RepositoryContentFileOptions{
-		Message:   github.String("Version Update!"),
-		Content:   []byte(c),
-		SHA:       masterReadmeContents.SHA,
-		Branch:    github.String("main"),
-		Committer: &github.CommitAuthor{Name: github.String("Automated " + github_level.PS(user.Name)), Email: user.Email},
-	})
-	if err != nil {
-		log.Panicf("Error creating/updating readme: %v", err)
+	postsha := sha1.Sum([]byte(c))
+	if presha != postsha {
+		_, _, err = client.Repositories.CreateFile(ctx, githubUser, "github-level", "README.md", &github.RepositoryContentFileOptions{
+			Message:   github.String("Version Update!"),
+			Content:   []byte(c),
+			SHA:       masterReadmeContents.SHA,
+			Branch:    github.String("main"),
+			Committer: &github.CommitAuthor{Name: github.String("Automated " + github_level.PS(user.Name)), Email: user.Email},
+		})
+		if err != nil {
+			log.Panicf("Error creating/updating readme: %v", err)
+		}
+	} else {
+		log.Printf("Presha %v matches post sha %v skipping", presha, postsha)
 	}
-
 	if stats.SelfNamedRepo {
 		log.Printf("Running in self made profile.")
 		RunInSelfNamedRepo(ctx, client, stats, user, githubUser)
@@ -101,17 +107,24 @@ func RunInSelfNamedRepo(ctx context.Context, client *github.Client, stats *githu
 		}
 		c = string(b)
 	}
+	presha := sha1.Sum([]byte(c))
+	c = ReplaceContent(stats, c)
+	postsha := sha1.Sum([]byte(c))
 	c = ReplaceContent(stats, c)
 	branch := fmt.Sprintf("githublevel-%s", time.Now().Format("D20060102T1504"))
-	_, _, err = client.Repositories.CreateFile(ctx, githubUser, githubUser, "README.md", &github.RepositoryContentFileOptions{
-		Message:   github.String("Version Update!"),
-		Content:   []byte(c),
-		SHA:       masterReadmeContents.SHA,
-		Branch:    github.String(branch),
-		Committer: &github.CommitAuthor{Name: github.String("Automated " + github_level.PS(user.Name)), Email: user.Email},
-	})
-	if err != nil {
-		log.Panicf("Error user creating/updating readme: %v", err)
+	if presha != postsha {
+		_, _, err = client.Repositories.CreateFile(ctx, githubUser, githubUser, "README.md", &github.RepositoryContentFileOptions{
+			Message:   github.String("Version Update!"),
+			Content:   []byte(c),
+			SHA:       masterReadmeContents.SHA,
+			Branch:    github.String(branch),
+			Committer: &github.CommitAuthor{Name: github.String("Automated " + github_level.PS(user.Name)), Email: user.Email},
+		})
+		if err != nil {
+			log.Panicf("Error user creating/updating readme: %v", err)
+		}
+	} else {
+		log.Printf("Presha %v matches post sha %v skipping", presha, postsha)
 	}
 
 }
