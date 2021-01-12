@@ -46,7 +46,11 @@ func main() {
 	c := *masterReadmeContents.Content
 	switch masterReadmeContents.GetEncoding() {
 	case "base64":
-		c = base64.StdEncoding.EncodeToString([]byte(c))
+		b, err := base64.StdEncoding.DecodeString(c)
+		if err != nil {
+			log.Panicf("Error %v", err)
+		}
+		c = string(b)
 	}
 	c = ReplaceContent(stats, c)
 	_, _, err = client.Repositories.CreateFile(ctx, githubUser, "github-level", "README.md", &github.RepositoryContentFileOptions{
@@ -87,7 +91,11 @@ func RunInSelfNamedRepo(ctx context.Context, stats *github_level.Stats, user *gi
 	c := *masterReadmeContents.Content
 	switch masterReadmeContents.GetEncoding() {
 	case "base64":
-		c = base64.StdEncoding.EncodeToString([]byte(c))
+		b, err := base64.StdEncoding.DecodeString(c)
+		if err != nil {
+			log.Panicf("Error %v", err)
+		}
+		c = string(b)
 	}
 	c = ReplaceContent(stats, c)
 	branch := fmt.Sprintf("githublevel-%s", time.Now().Format("20060102T1504"))
