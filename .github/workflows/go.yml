@@ -24,6 +24,12 @@ jobs:
     - name: Text Levels
       run: go run github.com/arran4/github-level/cmd/leveltext
 
-    - name: Create Badge Files
-      run: go run github.com/arran4/github-level/cmd/badge
+#    - name: Create Badge Files
+#      run: go run github.com/arran4/github-level/cmd/badge
+
+    - name: Output shield
+      run: go run github.com/arran4/github-level/cmd/sheild | tee shield.txt
+
+    - name: PR shield
+      run: go run github.com/arran4/github-level/cmd/prsheild
 

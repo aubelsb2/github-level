@@ -1,7 +1,10 @@
 package github_level
 
 import (
+	"fmt"
+	"image/png"
 	"log"
+	"os"
 	"testing"
 	"time"
 )
@@ -44,6 +47,17 @@ func TestL1(t *testing.T) {
 				t.Fatalf("Got level 1 level: %v", v)
 			}
 			t.Logf("Got level 1 level: %v", v)
+			i := each.Level.Badge()
+			w, err := os.Create(fmt.Sprintf("badge-version-%v.png", each.Level.Version()))
+			if err != nil {
+				t.Fatalf("OS Create error: %v", err)
+			}
+			if err := png.Encode(w, i); err != nil {
+				t.Fatalf("PNG encode error: %v", err)
+			}
+			if err := w.Close(); err != nil {
+				t.Fatalf("Writer close error: %v", err)
+			}
 		})
 	}
 }

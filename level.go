@@ -1,12 +1,41 @@
 package github_level
 
-import "math"
+import (
+	"fmt"
+	"github.com/fogleman/gg"
+	"image"
+	"image/color"
+	"math"
+	"os"
+)
 
 type Level interface {
 	Calculate() int
 	Version() int
+	Shield() string
 	//Badge() image.Image
 }
+
+var (
+	blue = color.RGBA{
+		R: 0,
+		G: 0,
+		B: 255,
+		A: 255,
+	}
+	green = color.RGBA{
+		R: 0,
+		G: 255,
+		B: 0,
+		A: 255,
+	}
+	gold = color.RGBA{
+		R: 222,
+		G: 200,
+		B: 55,
+		A: 255,
+	}
+)
 
 type GithubLevelV1 Stats
 
@@ -57,6 +86,26 @@ func (GithubLevelV1) Version() int {
 	return 1
 }
 
-//func (GithubLevelV1) Badge() image.Image {
-//
-//}
+func (l GithubLevelV1) Shield() string {
+	v := l.Calculate()
+	githubUser := os.ExpandEnv("${GITHUB_REPOSITORY_OWNER}")
+	url := fmt.Sprintf("https://github.com/%s/github-level", githubUser)
+	return fmt.Sprintf(`<a id="githubLevelId" href="%s"> <img src="https://img.shields.io/badge/%s%%20version%v-%v-yellowgreen" alt="Github level %v"/></a>`, url, "Github Level",
+		l.Version(), v, v)
+}
+
+func (GithubLevelV1) Badge() image.Image {
+	// Never minds found https://github.com/badges/shields
+	dc := gg.NewContext(200, 50)
+	drawBadgeBack(dc, 200, 50)
+	return dc.Image()
+}
+
+func drawBadgeBack(dc *gg.Context, width float64, height float64) {
+	dc.Push()
+	dc.DrawRoundedRectangle(10, 10, width-20, height-20, 10)
+	dc.SetColor(green)
+	dc.FillPreserve()
+	dc.ClearPath()
+	dc.Pop()
+}
