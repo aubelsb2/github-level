@@ -35,7 +35,20 @@ func main() {
 	if err != nil {
 		log.Panicf("Error: %v", err)
 	}
-	log.Printf("Got user %#v", user)
+
+	userEmails, _, err := client.Users.ListEmails(ctx, &github.ListOptions{})
+	if err != nil {
+		log.Panicf("Failed to list email %v", err)
+	}
+	var email string
+	for _, userEmail := range userEmails {
+		if len(email) == 0 || (userEmail.GetPrimary() && len(userEmail.GetEmail()) > 0) {
+			email = userEmail.GetEmail()
+		}
+	}
+	if len(email) == 0 {
+		log.Panicf("Failed to find a email %v", userEmails)
+	}
 
 	masterReadmeContents, _, err := client.Repositories.GetReadme(ctx, githubUser, "github-level", &github.RepositoryContentGetOptions{})
 	if err != nil {
