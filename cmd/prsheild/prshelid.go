@@ -35,6 +35,7 @@ func main() {
 	if err != nil {
 		log.Panicf("Error: %v", err)
 	}
+	log.Printf("Got user %#v", user)
 
 	masterReadmeContents, _, err := client.Repositories.GetReadme(ctx, githubUser, "github-level", &github.RepositoryContentGetOptions{})
 	if err != nil {
@@ -61,7 +62,6 @@ func main() {
 		if err != nil {
 			log.Printf("Presha %v postsha %v", presha, postsha)
 			log.Printf("Master read me: %v %v %v %v", masterReadmeContents.GetPath(), masterReadmeContents.GetSHA(), masterReadmeContents.GetType(), MustStr(masterReadmeContents.GetContent()))
-			log.Printf("Email %v", user.Email)
 			log.Panicf("Error creating/updating readme: %v", err)
 		}
 	} else {
