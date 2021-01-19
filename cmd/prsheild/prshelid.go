@@ -36,20 +36,6 @@ func main() {
 		log.Panicf("Error: %v", err)
 	}
 
-	userEmails, _, err := client.Users.ListEmails(ctx, &github.ListOptions{})
-	if err != nil {
-		log.Panicf("Failed to list email %v", err)
-	}
-	var email string
-	for _, userEmail := range userEmails {
-		if len(email) == 0 || (userEmail.GetPrimary() && len(userEmail.GetEmail()) > 0) {
-			email = userEmail.GetEmail()
-		}
-	}
-	if len(email) == 0 {
-		log.Panicf("Failed to find a email %v", userEmails)
-	}
-
 	masterReadmeContents, _, err := client.Repositories.GetReadme(ctx, githubUser, "github-level", &github.RepositoryContentGetOptions{})
 	if err != nil {
 		log.Panicf("Readme get fail: %v", err)
@@ -64,13 +50,17 @@ func main() {
 	presha := sha1.Sum([]byte(c))
 	c = ReplaceContent(stats, c)
 	postsha := sha1.Sum([]byte(c))
+	email := user.GetEmail()
+	if len(email) == 0 {
+		email = fmt.Sprintf("%s@github.com", user.GetName())
+	}
 	if presha != postsha {
 		_, _, err = client.Repositories.CreateFile(ctx, githubUser, "github-level", masterReadmeContents.GetPath(), &github.RepositoryContentFileOptions{
 			Message:   github.String(fmt.Sprintf("Github Level Update: Now %v!", stats.V1().Calculate())),
 			Content:   []byte(c),
 			SHA:       github.String(masterReadmeContents.GetSHA()),
 			Branch:    github.String("main"),
-			Committer: &github.CommitAuthor{Name: github.String("Automated " + github_level.PS(user.Name)), Email: user.Email},
+			Committer: &github.CommitAuthor{Name: github.String("Automated " + github_level.PS(user.Name)), Email: &email},
 		})
 		if err != nil {
 			log.Printf("Presha %v postsha %v", presha, postsha)
